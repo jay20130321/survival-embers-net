@@ -1,0 +1,14 @@
+services:
+  - type: web
+    name: survival-embers-net
+    runtime: node
+    plan: free
+    region: oregon
+    buildCommand: npm install
+    startCommand: npm start
+    healthCheckPath: /health
+    envVars:
+      - key: NODE_VERSION
+        value: "20"
+      - key: PLAY_URL
+        value: "https://jay20130321.github.io/survival-embers/"
