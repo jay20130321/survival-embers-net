@@ -112,7 +112,19 @@ function heightAt(seed, x, z) {
 }
 
 function isLand(seed, x, z) {
-  return heightAt(seed, x, z) > 0.35 && islandMask(x, z) > 0.18;
+  return heightAt(seed, x, z) > 0.55 && islandMask(x, z) > 0.22;
+}
+
+function isSolidGround(seed, x, z) {
+  if (!isLand(seed, x, z)) return false;
+  if (heightAt(seed, x, z) < 0.95) return false;
+  for (const ox of [-1.2, 0, 1.2]) {
+    for (const oz of [-1.2, 0, 1.2]) {
+      if (ox === 0 && oz === 0) continue;
+      if (!isLand(seed, x + ox, z + oz)) return false;
+    }
+  }
+  return true;
 }
 
 function mulberry32(a) {
@@ -132,16 +144,16 @@ function buildResourceList(seed) {
   let id = 0;
   for (let ix = -22; ix <= 22; ix++) {
     for (let iz = -22; iz <= 22; iz++) {
-      const x = ix * CELL + (rng() - 0.5) * 0.8;
-      const z = iz * CELL + (rng() - 0.5) * 0.8;
-      if (!isLand(seed, x, z)) continue;
+      const x = ix * CELL + (rng() - 0.5) * 0.35;
+      const z = iz * CELL + (rng() - 0.5) * 0.35;
+      if (!isSolidGround(seed, x, z)) continue;
       const h = heightAt(seed, x, z);
       const roll = rng();
       let kind = "";
-      if (roll < 0.1 && h > 1.2) kind = "tree";
-      else if (roll < 0.16 && h > 0.8) kind = "rock";
-      else if (roll < 0.2) kind = "bush";
-      else if (roll < 0.215 && h > 0.6) kind = "animal";
+      if (roll < 0.1 && h > 1.35) kind = "tree";
+      else if (roll < 0.16 && h > 1.1) kind = "rock";
+      else if (roll < 0.2 && h > 1.0) kind = "bush";
+      else if (roll < 0.215 && h > 1.05) kind = "animal";
       if (!kind) continue;
       let hp = 3;
       if (kind === "tree") hp = 4;
